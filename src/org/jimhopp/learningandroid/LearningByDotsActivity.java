@@ -6,7 +6,10 @@ import android.os.Bundle;
 import android.widget.LinearLayout;
 import android.widget.EditText;
 import android.widget.Button;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
+import android.view.MotionEvent;
 
 import org.jimhopp.learningandroid.model.Dots;
 import org.jimhopp.learningandroid.model.Dot;
@@ -55,9 +58,25 @@ public class LearningByDotsActivity extends Activity {
             	makeDot(model, Color.GREEN);
             }
         });
+        
+        dotView.setOnTouchListener(new View.OnTouchListener() {
+
+			public boolean onTouch(View v, MotionEvent event) {
+				// TODO Auto-generated method stub
+				switch (event.getAction()) {
+				case MotionEvent.ACTION_DOWN:
+					model.addDot(new Dot (event.getX(), event.getY(), Color.CYAN, 6));
+					return true;
+				default:
+					break;
+				}
+				return false;
+			}
+        	
+        });
     }
 	
 	void makeDot(Dots model, int color) {
-    	model.addDot(new Dot (mRand.nextFloat() * 200, mRand.nextFloat() * 200, color, 15));
+    	model.addDot(new Dot (mRand.nextFloat() * 200, mRand.nextFloat() * 200, color, 6));
 	}
 }
