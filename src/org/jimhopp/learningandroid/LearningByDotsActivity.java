@@ -65,7 +65,14 @@ public class LearningByDotsActivity extends Activity {
 				// TODO Auto-generated method stub
 				switch (event.getAction()) {
 				case MotionEvent.ACTION_DOWN:
-					model.addDot(new Dot (event.getX(), event.getY(), Color.CYAN, 6));
+					return true;
+				case MotionEvent.ACTION_MOVE:
+					for (int i = 0; i < event.getHistorySize();i++) {
+						model.addDot(new Dot (event.getHistoricalX(i), 
+								              event.getHistoricalY(i), 
+								              Color.CYAN, 
+								              6));	
+					}
 					return true;
 				default:
 					break;
