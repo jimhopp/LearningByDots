@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.widget.LinearLayout;
 import android.widget.EditText;
 import android.widget.Button;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -38,8 +40,8 @@ public class LearningByDotsActivity extends Activity {
         
         model.setDotsChangeListener(new Dots.DotsChangeListener() {
 			public void onDotsChange(Dots dots) {
-				tb1.setText(String.valueOf(dots.getLastDot().getX()));
-				tb2.setText(String.valueOf(dots.getLastDot().getY()));
+				tb1.setText(null == dots.getLastDot() ? "" : String.valueOf(dots.getLastDot().getX()));
+				tb2.setText(null == dots.getLastDot() ? "" : String.valueOf(dots.getLastDot().getY()));
 				dotView.invalidate();
 			}
 		});
@@ -65,19 +67,24 @@ public class LearningByDotsActivity extends Activity {
 				// TODO Auto-generated method stub
 				switch (event.getAction()) {
 				case MotionEvent.ACTION_DOWN:
-					return true;
+					break;
 				case MotionEvent.ACTION_MOVE:
-					for (int i = 0; i < event.getHistorySize();i++) {
+					int n = event.getHistorySize();
+					for (int i = 0; i < n;i++) {
 						model.addDot(new Dot (event.getHistoricalX(i), 
 								              event.getHistoricalY(i), 
 								              Color.CYAN, 
 								              6));	
 					}
-					return true;
-				default:
 					break;
+				default:
+					return false;
 				}
-				return false;
+				model.addDot(new Dot (event.getX(), 
+			              event.getY(), 
+			              Color.CYAN, 
+			              6));
+				return true;
 			}
         	
         });
@@ -86,4 +93,32 @@ public class LearningByDotsActivity extends Activity {
 	void makeDot(Dots model, int color) {
     	model.addDot(new Dot (mRand.nextFloat() * 200, mRand.nextFloat() * 200, color, 6));
 	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// TODO Auto-generated method stub
+		super.onCreateOptionsMenu(menu);
+	    menu.add(Menu.NONE, 1, Menu.NONE, "Clear").setAlphabeticShortcut('x');
+	    return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onOptionsItemSelected(android.view.MenuItem)
+	 */
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+		switch (item.getItemId()) {
+		case 1: 
+			model.clearDots();
+			return true;
+			
+		default:
+				break;
+		}
+		return false;
+	}
+
+	
+	
 }

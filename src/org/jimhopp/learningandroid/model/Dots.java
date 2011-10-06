@@ -2,6 +2,7 @@ package org.jimhopp.learningandroid.model;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.NoSuchElementException;
 
 import android.graphics.Color;
 
@@ -19,20 +20,32 @@ public class Dots {
 	
 	public void addDot(Dot dot) {
 		dots.add(dot);
-	    if (dotsChangeListener != null)	{
-	    	dotsChangeListener.onDotsChange(this);
-	    }
+		notifyListener();
 	}
 	
 	public Dot getLastDot() {
-		return dots.getLast();
+		try {
+			return dots.getLast();
+		} catch (NoSuchElementException e) {
+			return null;
+		}
 	}
 	
 	public Iterator<Dot> getDots() {
 		return dots.iterator();
 	}
+	
+	public void clearDots() {
+		dots.clear();
+		notifyListener();
+	}
 
 	public void setDotsChangeListener(DotsChangeListener l){
 		dotsChangeListener = l;
+	}
+	void notifyListener() {
+		if (dotsChangeListener != null)	{
+	    	dotsChangeListener.onDotsChange(this);
+	    }
 	}
 }
