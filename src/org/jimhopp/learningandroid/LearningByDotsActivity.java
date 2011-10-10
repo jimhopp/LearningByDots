@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.view.View.OnFocusChangeListener;
 import android.view.MotionEvent;
 
 import org.jimhopp.learningandroid.model.Dots;
@@ -88,6 +89,18 @@ public class LearningByDotsActivity extends Activity {
 			}
         	
         });
+        
+        dotView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+			
+			public void onFocusChange(View v, boolean hasFocus) {
+				// TODO Auto-generated method stub
+				if (hasFocus) { 
+					makeDot(model, Color.YELLOW);
+				}
+				else
+					makeDot(model, Color.MAGENTA);
+				}
+		});
     }
 	
 	void makeDot(Dots model, int color) {
