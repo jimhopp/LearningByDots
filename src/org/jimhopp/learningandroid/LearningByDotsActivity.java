@@ -3,6 +3,7 @@ package org.jimhopp.learningandroid;
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.widget.LinearLayout;
 import android.widget.EditText;
 import android.widget.Button;
@@ -26,7 +27,42 @@ public class LearningByDotsActivity extends Activity {
 	
 	Dots model = new Dots();
 	DotsView dotView;
+    DotGenerator dotGenerator = null;
 
+	private final class DotGenerator implements Runnable {
+ 
+		final Dots dots;
+		final DotsView dotsview;
+		final int color;
+		
+		private volatile boolean done;
+		
+		DotGenerator(Dots dots, DotsView dotsview, int color) {
+			this.dots = dots;
+			this.dotsview = dotsview;
+			this.color = color;
+		}
+		
+		private Handler handler = new Handler();
+		private Runnable makeDots = new Runnable() {
+			public void run() { makeDot(dots, color); }
+		};
+	    public void done() { done = true; } 
+		
+		/* (non-Javadoc)
+		 * @see java.lang.Runnable#run()
+		 */
+		
+		
+		public void run() {
+			// TODO Auto-generated method stub
+			while (!done) {
+				handler.post(makeDots);
+				try { Thread.sleep(5000); }
+				catch (InterruptedException e) { }
+			}
+		}
+	}
 	/** Called when the activity is first created. */
 	@Override
     public void onCreate(Bundle state) {
@@ -94,13 +130,16 @@ public class LearningByDotsActivity extends Activity {
 			
 			public void onFocusChange(View v, boolean hasFocus) {
 				// TODO Auto-generated method stub
-				if (hasFocus) { 
-					makeDot(model, Color.YELLOW);
+				if (hasFocus && dotGenerator == null) { 
+					dotGenerator = new DotGenerator(model, dotView, Color.BLACK);
+					new Thread(dotGenerator).start();
 				}
-				else
-					makeDot(model, Color.MAGENTA);
+				else if (!hasFocus && dotGenerator != null) {
+					dotGenerator.done();
+					dotGenerator = null;
 				}
-		});
+			}
+        });
     }
 	
 	void makeDot(Dots model, int color) {
